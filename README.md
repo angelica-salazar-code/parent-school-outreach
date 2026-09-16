@@ -61,10 +61,15 @@ NuevoFoundation/outreach contains an editable HTML flyer and sample email.
 Its **View the flyer** action switches tabs within that page using
 `#flyer-panel`, and its engagement action opens a contact email.
 
-This deployment's `flyer.html` displays the supplied image of the flyer with
-a text summary and the current Microsoft Forms engagement action. Its full
-public address can be shared directly in emails. The original campaign is
-preserved; no marketing claims are added or independently verified.
+This deployment's `flyer.html` is the standalone flyer itself, adapted from the
+original campaign's HTML, with selectable text, the official logo and mascot,
+canonical Nuevo Foundation colors, and the current Microsoft Forms engagement
+action. It has no screenshot wrapper, tabs, or download requirement. Its full
+public address can be shared directly in emails. `flyer.css` provides responsive
+and print layouts while keeping the flyer light-branded regardless of device theme.
+The original campaign wording and metrics are preserved; no marketing claims
+are added or independently verified. The supplied image remains available only
+as the builder's small preview and optional image download.
 
 The eventual production destination for both the outreach site and flyer
 remains Nuevo Foundation's official website, subject to its publishing approval.
