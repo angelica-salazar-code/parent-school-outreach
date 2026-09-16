@@ -1,17 +1,9 @@
 import { engagementDestinationUrl, engagementUrl } from "./config.js";
+import { defaultLanguage, languageCodes, pack } from "./i18n.js";
 
-export const grades = Object.freeze({
-  elementary: "grades 1-5",
-  middle: "grades 6-8",
-  high: "grades 9-12",
-  mixed: "multiple grade levels",
-});
-
-export const interests = Object.freeze({
-  coding: "coding workshops",
-  virtual: "virtual sessions",
-  speakers: "STEM speakers",
-});
+// English values remain the module's defaults so existing callers keep working.
+export const grades = pack(defaultLanguage).grades;
+export const interests = pack(defaultLanguage).interests;
 
 // Email applications have different limits; use copying for longer drafts.
 export const mailtoLimit = 1800;
@@ -20,33 +12,35 @@ export function singleLine(value) {
   return value.replace(/[\u0000-\u001f\u007f\s]+/g, " ").trim();
 }
 
-export function validateAnswers({ school, grade, selectedInterests }) {
+export function validateAnswers({ school, grade, selectedInterests }, language = defaultLanguage) {
+  const strings = pack(language).errors;
   const errors = {};
   if (!singleLine(school)) {
-    errors.school = "Enter your school's name.";
+    errors.school = strings.school;
   } else if (singleLine(school).length > 120) {
-    errors.school = "Use 120 characters or fewer for the school name.";
+    errors.school = strings.schoolLong;
   }
   if (!Object.hasOwn(grades, grade)) {
-    errors.grade = "Choose a grade level.";
+    errors.grade = strings.grade;
   }
   if (
     !Array.isArray(selectedInterests) ||
     selectedInterests.length === 0 ||
     selectedInterests.some((interest) => !Object.hasOwn(interests, interest))
   ) {
-    errors.interests = "Choose at least one interest.";
+    errors.interests = strings.interests;
   }
   return errors;
 }
 
-export function validateFlyerUrl(value) {
+export function validateFlyerUrl(value, language = defaultLanguage) {
   if (value === "") return "";
+  const strings = pack(language).errors;
   let url;
   try {
     url = new URL(value);
   } catch {
-    throw new Error("The flyer address must be a verified public HTTPS link.");
+    throw new Error(strings.flyerInvalid);
   }
   const host = url.hostname;
   if (
@@ -61,46 +55,55 @@ export function validateFlyerUrl(value) {
     url.href === new URL(engagementUrl).href ||
     url.origin === new URL(engagementDestinationUrl).origin
   ) {
-    throw new Error("Use the verified public flyer link, not a local address or the interest form.");
+    throw new Error(strings.flyerUnsafe);
   }
   return url.href;
 }
 
-function joinList(items) {
-  if (items.length < 3) return items.join(" and ");
-  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
+// The published flyer has one static file per language, so a recipient opens it
+// in the same language as the email that linked to it.
+export function localizeFlyerUrl(flyerUrl, language = defaultLanguage) {
+  // Only languages that actually have a published flyer file are substituted,
+  // so an unknown code can never point parents at a missing page.
+  if (!flyerUrl || language === defaultLanguage || !languageCodes.includes(language)) return flyerUrl;
+  const url = new URL(flyerUrl);
+  if (!url.pathname.endsWith("/flyer.html")) return flyerUrl;
+  url.pathname = url.pathname.replace(/\/flyer\.html$/, `/flyer-${language}.html`);
+  return url.href;
 }
 
-export function createEmail(answers, flyerUrl = "") {
-  const errors = validateAnswers(answers);
+export function createEmail(answers, flyerUrl = "", language = defaultLanguage) {
+  const errors = validateAnswers(answers, language);
   if (Object.keys(errors).length) {
     throw new Error(Object.values(errors).join(" "));
   }
+  const strings = pack(language);
   const school = singleLine(answers.school);
-  const selected = [...new Set(answers.selectedInterests)].map((key) => interests[key]);
-  const flyer = validateFlyerUrl(flyerUrl);
+  const selected = [...new Set(answers.selectedInterests)].map((key) => strings.interests[key]);
+  const flyer = validateFlyerUrl(flyerUrl, language);
   const paragraphs = [
-    `Hello ${school} team,`,
-    `I'm a parent interested in bringing more opportunities to explore science, technology, engineering, and math (STEM) to students in ${grades[answers.grade]} at ${school}.`,
-    `I came across Nuevo Foundation and thought its ${joinList(selected)} could be worth exploring for our school. Its flyer describes hands-on learning and opportunities to connect with STEM role models.`,
-    "Would our school be interested in learning more? I would love to hear whether this might be a fit and who would be the best person at the school to discuss it.",
+    strings.email.greeting(school),
+    strings.email.intro(strings.grades[answers.grade], school),
+    strings.email.discovery(strings.joinList(selected)),
+    strings.email.ask,
   ];
-  if (flyer) paragraphs.push(`Here is Nuevo Foundation's flyer:\n${flyer}`);
+  if (flyer) paragraphs.push(`${strings.email.flyerIntro}\n${flyer}`);
   paragraphs.push(
-    `Your team can express interest directly through Nuevo Foundation's Programs Interest Form:\n${engagementUrl}`,
-    "Thank you for considering the idea!",
-    "Best,\n[Your name]",
+    `${strings.email.formIntro}\n${engagementUrl}`,
+    strings.email.thanks,
+    strings.email.signature,
   );
   return {
-    subject: `Could we explore Nuevo Foundation for ${school}?`,
+    subject: strings.email.subject(school),
     body: paragraphs.join("\n\n"),
   };
 }
 
-export function createMailto({ subject, body }, limit = mailtoLimit) {
+export function createMailto({ subject, body }, limit = mailtoLimit, language = defaultLanguage) {
+  const strings = pack(language).status;
   const cleanSubject = singleLine(subject);
   if (!cleanSubject || !body.trim()) {
-    return { url: null, message: "Add a subject and message before opening your email app." };
+    return { url: null, message: strings.mailtoEmpty };
   }
   let url;
   try {
@@ -108,29 +111,32 @@ export function createMailto({ subject, body }, limit = mailtoLimit) {
     url = `mailto:?subject=${encodeURIComponent(cleanSubject)}&body=${encodeURIComponent(message)}`;
   } catch (error) {
     if (!(error instanceof URIError)) throw error;
-    return { url: null, message: "This draft has a character your email app cannot receive. Use the copy buttons instead." };
+    return { url: null, message: strings.mailtoEncoding };
   }
   if (url.length > limit) {
-    return {
-      url: null,
-      message: "This draft is too long to open reliably in an email app. Copy the subject and message instead.",
-    };
+    return { url: null, message: strings.mailtoLong };
   }
   return { url, message: "" };
 }
 
-export function messageParts(body, flyerUrl = "") {
+export function messageParts(body, flyerUrl = "", language = defaultLanguage) {
+  const strings = pack(language).email;
   const text = body.replace(/\r\n|\r/g, "\n");
-  const flyer = validateFlyerUrl(flyerUrl);
+  const flyer = validateFlyerUrl(flyerUrl, language);
   const links = [
-    { source: "I came across Nuevo Foundation", prefix: "I came across ", text: "Nuevo Foundation", href: "https://nuevofoundation.org/" },
-    { source: `Form:\n${engagementUrl}`, text: "Form", href: engagementUrl },
-    { source: engagementUrl, text: "Form", href: engagementUrl },
+    {
+      source: `${strings.brandPrefix}Nuevo Foundation`,
+      prefix: strings.brandPrefix,
+      text: "Nuevo Foundation",
+      href: "https://nuevofoundation.org/",
+    },
+    { source: `${strings.formTail}\n${engagementUrl}`, text: strings.formLabel, href: engagementUrl },
+    { source: engagementUrl, text: strings.formLabel, href: engagementUrl },
   ];
   if (flyer) {
     links.push(
-      { source: `Here is Nuevo Foundation's flyer:\n${flyer}`, text: "View the flyer", href: flyer },
-      { source: flyer, text: "View the flyer", href: flyer },
+      { source: `${strings.flyerIntro}\n${flyer}`, text: strings.flyerLabel, href: flyer },
+      { source: flyer, text: strings.flyerLabel, href: flyer },
     );
   }
   const alternatives = links.map((link) => link.source.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
@@ -154,39 +160,39 @@ function escapeHtml(text) {
   })[character]);
 }
 
-export function formattedMessage(body, flyerUrl = "") {
-  const content = messageParts(body, flyerUrl).map((part) => part.href
+export function formattedMessage(body, flyerUrl = "", language = defaultLanguage) {
+  const content = messageParts(body, flyerUrl, language).map((part) => part.href
     ? `<a href="${escapeHtml(part.href)}">${escapeHtml(part.text)}</a>`
     : escapeHtml(part.text).replace(/\n/g, "<br>")).join("");
   return `<div>${content}</div>`;
 }
 
-export async function copyFormattedMessage(text, clipboard, { ClipboardItemType = globalThis.ClipboardItem, flyerUrl = "" } = {}) {
+export async function copyFormattedMessage(text, clipboard, { ClipboardItemType = globalThis.ClipboardItem, flyerUrl = "", language = defaultLanguage } = {}) {
+  const strings = pack(language).status;
   if (clipboard && typeof clipboard.write === "function" && ClipboardItemType) {
     try {
       await clipboard.write([new ClipboardItemType({
-        "text/html": new Blob([formattedMessage(text, flyerUrl)], { type: "text/html" }),
+        "text/html": new Blob([formattedMessage(text, flyerUrl, language)], { type: "text/html" }),
         "text/plain": new Blob([text], { type: "text/plain" }),
       })]);
-      return { ok: true, message: 'Copied formatted message. Paste normally into your email to preserve links, not "paste as plain text."' };
+      return { ok: true, message: strings.copiedRich };
     } catch {
       // Some browsers allow text copying but deny formatted clipboard content.
     }
   }
-  const result = await copyText(text, clipboard);
-  return result.ok
-    ? { ok: true, message: "Copied as plain text because formatted copying was unavailable. Any links will appear as their URLs." }
-    : result;
+  const result = await copyText(text, clipboard, language);
+  return result.ok ? { ok: true, message: strings.copiedPlainFallback } : result;
 }
 
-export async function copyText(text, clipboard) {
+export async function copyText(text, clipboard, language = defaultLanguage) {
+  const strings = pack(language).status;
   if (!clipboard || typeof clipboard.writeText !== "function") {
-    return { ok: false, message: "Automatic copying is unavailable. The text is selected; use your device's Copy command." };
+    return { ok: false, message: strings.copyUnavailable };
   }
   try {
     await clipboard.writeText(text);
-    return { ok: true, message: "Copied. Paste it into your email." };
+    return { ok: true, message: strings.copied };
   } catch {
-    return { ok: false, message: "Your browser could not copy the text. It is selected; use your device's Copy command." };
+    return { ok: false, message: strings.copyFailed };
   }
 }

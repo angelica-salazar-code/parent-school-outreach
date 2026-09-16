@@ -30,6 +30,26 @@
   text-align: right;
   text-transform: uppercase;
 }
+.flyer-languages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  padding: 0 48px 4px;
+}
+.flyer-languages a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--nuevo-gray-700);
+}
+.flyer-languages a[aria-current="true"] {
+  color: var(--nuevo-emphasis);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
 .flyer-intro {
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
@@ -92,6 +112,7 @@
   .flyer-sheet { box-shadow: none; }
   .flyer-brand { padding: 24px 20px 12px; gap: 12px; }
   .flyer-brand p { font-size: 10px; }
+  .flyer-languages { padding: 0 20px 4px; gap: 4px 16px; }
   .flyer-intro { grid-template-columns: 1fr; padding: 20px; gap: 24px; }
   .flyer-mascot { width: min(100%, 260px); justify-self: center; }
   .flyer-programs { grid-template-columns: 1fr; margin: 12px 20px 24px; }
@@ -108,6 +129,7 @@
   .flyer-page { padding: 0; background: var(--nuevo-white); print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .flyer-sheet { max-width: none; box-shadow: none; }
   .flyer-brand { padding: 18px 24px 12px; }
+  .flyer-languages { display: none; }
   .flyer-intro { padding: 12px 24px 24px; }
   .flyer-intro h1 { font-size: 34px; }
   .flyer-lead { font-size: 15px; }
