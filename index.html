@@ -88,23 +88,23 @@
               <div class="field">
                 <div class="label-row"><span id="message-preview-label" class="preview-label">Message preview</span><button type="button" class="copy-button" id="copy-message">Copy message</button></div>
                 <div id="message-preview" class="message-preview" role="region" aria-labelledby="message-preview-label"></div>
-                <p class="field-hint">Copy the message and paste it into your email to keep the clickable "Form" link.</p>
+                <p class="field-hint">Copy the message and paste it normally into your email to keep the clickable links, including "View the flyer."</p>
                 <details id="message-edit">
                   <summary>Edit message text</summary>
                   <label for="message">Message</label>
-                  <p class="field-hint">The editor shows the short URL. The preview above displays it as the linked word "Form."</p>
+                  <p class="field-hint">The editor shows the link addresses. The preview above displays them as "Form" and, when available, "View the flyer."</p>
                   <textarea id="message" rows="19" maxlength="12000" autocomplete="off" spellcheck="true"></textarea>
                 </details>
               </div>
               <div class="send-box">
                 <p class="eyebrow">03 &nbsp; Over to you</p>
                 <div class="send-actions">
-                  <a id="download-email-flyer" class="button button-secondary" href="./assets/nuevo-foundation-flyer.png" download="Nuevo-Foundation-flyer.png" aria-describedby="attach-flyer-hint">Download flyer <span aria-hidden="true">&#8595;</span></a>
+                  <a id="view-email-flyer" class="button button-secondary" href="./flyer.html" target="_blank" rel="noopener noreferrer" aria-describedby="email-flyer-hint">View the flyer <span aria-hidden="true">&#8599;</span><span class="sr-only">(opens a new tab)</span></a>
                   <a id="open-email" class="button button-primary" href="mailto:">Open my email app <span aria-hidden="true">&#8599;</span></a>
                 </div>
-                <p id="attach-flyer-hint" class="field-hint"><strong>To include the flyer:</strong> download it first, then open your email app. Use its paperclip or "Attach file" button to select <strong>Nuevo-Foundation-flyer.png</strong>. This website cannot attach the file automatically.</p>
+                <p id="email-flyer-hint" class="field-hint">The public flyer link is not available yet. You can view the flyer here, but its link will not be included in the email until publishing is configured.</p>
                 <p class="field-hint">Choosing "Open my email app" passes your draft to your email app. Add the school's recipient there, review, and send it yourself. If no app opens, use the copy buttons.</p>
-                <p class="field-hint">Opening an email app uses plain text and shows the short URL. Use "Copy message" instead to keep "Form" as a clickable word.</p>
+                <p class="field-hint">Opening an email app includes the full link addresses as plain text. Use "Copy message" instead to preserve the clickable words, including "View the flyer."</p>
               </div>
               <p id="draft-status" class="status-message" role="status" aria-live="polite"></p>
             </div>
@@ -124,7 +124,7 @@
               <a class="text-link" href="./flyer.html" target="_blank" rel="noopener">View larger <span class="sr-only">(opens a new tab)</span><span aria-hidden="true">&#8599;</span></a>
               <a class="text-link" href="./assets/nuevo-foundation-flyer.png" download="Nuevo-Foundation-flyer.png">Download flyer <span aria-hidden="true">&#8595;</span></a>
             </div>
-            <p id="flyer-link-status" class="notice">A public flyer link isn't ready yet, so the email won't include one. You can download the image and attach it manually. Links pictured in a downloaded image are not clickable.</p>
+            <p id="flyer-link-status" class="notice">A public flyer link isn't ready yet, so the email won't include one. The flyer preview is available here.</p>
             <a class="button button-engagement" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR23fuGVglxBBl1KGeP0580dUQ1hUMVFQMjlFRlhQMFlKSTVGWEhBVUYxQSQlQCN0PWcu" target="_blank" rel="noopener noreferrer">Request an engagement <span aria-hidden="true">&#8599;</span><span class="sr-only">(opens Microsoft Forms in a new tab)</span></a>
             <p class="field-hint">A separate form run by Nuevo Foundation. Opening it doesn't send your answers from this page.</p>
           </div>

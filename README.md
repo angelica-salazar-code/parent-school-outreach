@@ -49,8 +49,22 @@ API links began displaying an interstitial page instead of reliably opening the
 form. Microsoft Forms has its own privacy policy.
 
 Formatted copying preserves the clickable **Nuevo Foundation**, **Form**, and
-configured **View the flyer** links. Email-app links use plain text. Parents
-must download and manually attach the flyer if they want an attachment.
+configured **View the flyer** links. Email-app drafts include the full flyer
+URL as plain text. Step 3 opens the hosted flyer for viewing; parents share it
+as a link in the email body, not as an attachment. Downloading an image copy
+is optional and not part of the email-sharing flow.
+
+## Comparison with the original campaign
+
+The original `campaigns/school-community-engagement/preview.html` in
+NuevoFoundation/outreach contains an editable HTML flyer and sample email.
+Its **View the flyer** action switches tabs within that page using
+`#flyer-panel`, and its engagement action opens a contact email.
+
+This deployment's `flyer.html` displays the supplied image of the flyer with
+a text summary and the current Microsoft Forms engagement action. Its full
+public address can be shared directly in emails. The original campaign is
+preserved; no marketing claims are added or independently verified.
 
 The eventual production destination for both the outreach site and flyer
 remains Nuevo Foundation's official website, subject to its publishing approval.

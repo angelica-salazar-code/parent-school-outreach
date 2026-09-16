@@ -160,7 +160,9 @@ window.addEventListener("pagehide", () => {
 try {
   flyerUrl = validateFlyerUrl(verifiedFlyerUrl);
   if (flyerUrl) {
-    get("flyer-link-status").textContent = "Your email will include the public flyer link. You can also download the image and attach it manually; links pictured in a downloaded image are not clickable.";
+    get("flyer-link-status").textContent = 'Your email includes a "View the flyer" link to this published flyer page. No download or attachment is needed.';
+    get("email-flyer-hint").textContent = 'The flyer is included in your email as a "View the flyer" link, not an attachment. The recipient can open it directly in their browser.';
+    get("view-email-flyer").href = flyerUrl;
   }
   form.hidden = false;
   get("startup-message").hidden = true;
