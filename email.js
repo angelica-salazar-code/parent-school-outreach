@@ -58,7 +58,8 @@ export function validateFlyerUrl(value) {
     host.includes(":") ||
     /(?:^|\.)(?:localhost|localdomain|local|internal|test|invalid|example)$/.test(host) ||
     /^example\.(?:com|net|org)$/.test(host) ||
-    [engagementUrl, engagementDestinationUrl].some((address) => url.origin === new URL(address).origin)
+    url.href === new URL(engagementUrl).href ||
+    url.origin === new URL(engagementDestinationUrl).origin
   ) {
     throw new Error("Use the verified public flyer link, not a local address or the interest form.");
   }

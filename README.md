@@ -41,9 +41,12 @@ or analytics of form values. GitHub handles ordinary website requests according
 to its hosting policies. Copying a message places text on the user's clipboard;
 opening an email app passes the reviewed draft to that application.
 
-The Microsoft interest form is reached through the verified TinyURL configured
-in `config.js`; those services have their own privacy policies. The website does
-not submit anything to that form automatically.
+The engagement buttons open the original Microsoft Forms address directly.
+Email drafts use this site's `form.html` as a shorter link, which automatically
+opens the same Microsoft Form and includes a manual fallback link. No parent
+answers are passed along or submitted. TinyURL was removed after its deprecated
+API links began displaying an interstitial page instead of reliably opening the
+form. Microsoft Forms has its own privacy policy.
 
 Formatted copying preserves the clickable **Nuevo Foundation**, **Form**, and
 configured **View the flyer** links. Email-app links use plain text. Parents
