@@ -4,6 +4,14 @@ Personal GitHub Pages deployment maintained by Angelica Salazar for the
 Nuevo Foundation parent-outreach project. This is not a deployment to
 Nuevo Foundation's official website.
 
+**Live website:** https://angelica-salazar-code.github.io/parent-school-outreach/
+
+**Public flyer:** https://angelica-salazar-code.github.io/parent-school-outreach/flyer.html
+
+The public flyer page and the original image were verified without authentication
+on September 16, 2026. This deployment's `config.js` uses that address so the
+generated email includes a **View the flyer** link.
+
 ## Source
 
 Runtime files come from `site/` in
