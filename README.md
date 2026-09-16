@@ -1,4 +1,4 @@
-# Parent and school outreach
+# NUEVO FOUNDATION Parent and school outreach
 
 Personal GitHub Pages deployment maintained by Angelica Salazar for the
 Nuevo Foundation parent-outreach project. This is not a deployment to
